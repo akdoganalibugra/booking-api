@@ -1,10 +1,11 @@
 import { Router } from "express";
 
 import { loginSchema, registerSchema } from "./auth.schemas.js";
+import { registerUser } from "./auth.service.js";
 
 const authRouter = Router();
 
-authRouter.post("/register", (request, response) => {
+authRouter.post("/register", async (request, response, next) => {
   const result = registerSchema.safeParse(request.body);
 
   if (!result.success) {
@@ -18,9 +19,15 @@ authRouter.post("/register", (request, response) => {
     return;
   }
 
-  response.status(501).json({
-    message: "Register endpoint sonraki fazda uygulanacak.",
-  });
+  try {
+    const user = await registerUser(result.data);
+
+    response.status(201).json({
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 authRouter.post("/login", (request, response) => {
