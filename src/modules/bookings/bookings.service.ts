@@ -60,11 +60,7 @@ export async function cancelBookingForUser(
     throw new AppError(BOOKINGS_MESSAGES.notFound, 404, "BOOKING_NOT_FOUND");
   }
 
-  if (booking.status !== BookingStatus.CANCELLED && booking.status !== BookingStatus.PENDING) {
-    throw new AppError(BOOKINGS_MESSAGES.notCancelable, 409, "BOOKING_NOT_CANCELABLE");
-  }
-
-  if (booking.status !== BookingStatus.CANCELLED && booking.cancelledAt === null) {
+  if (booking.status !== BookingStatus.CANCELLED) {
     throw new AppError(BOOKINGS_MESSAGES.notCancelable, 409, "BOOKING_NOT_CANCELABLE");
   }
 
