@@ -1,7 +1,9 @@
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 
 import { errorHandler } from "./common/middleware/error-handler.js";
 import { notFoundHandler } from "./common/middleware/not-found-handler.js";
+import { openApiDocument } from "./docs/openapi.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { bookingsRouter } from "./modules/bookings/bookings.routes.js";
 import { eventsRouter } from "./modules/events/events.routes.js";
@@ -18,6 +20,10 @@ export function createApp() {
       service: "booking-api",
     });
   });
+  app.get("/docs.json", (_request, response) => {
+    response.status(200).json(openApiDocument);
+  });
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   app.use("/auth", authRouter);
   app.use("/events", eventsRouter);
@@ -29,4 +35,3 @@ export function createApp() {
 
   return app;
 }
-
