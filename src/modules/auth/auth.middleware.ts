@@ -1,4 +1,5 @@
 import type { NextFunction, Response } from "express";
+import type { UserRole } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
 import { env } from "../../config/env.js";
@@ -39,4 +40,20 @@ export function requireAuth(
   } catch {
     next(new AppError("Geçersiz veya süresi dolmuş token.", 401, "INVALID_TOKEN"));
   }
+}
+
+export function requireRole(role: UserRole) {
+  return (request: AuthenticatedRequest, _response: Response, next: NextFunction): void => {
+    if (!request.user) {
+      next(new AppError("Kimlik doğrulama gereklidir.", 401, "UNAUTHORIZED"));
+      return;
+    }
+
+    if (request.user.role !== role) {
+      next(new AppError("Bu işlem için yetkiniz bulunmuyor.", 403, "FORBIDDEN"));
+      return;
+    }
+
+    next();
+  };
 }
