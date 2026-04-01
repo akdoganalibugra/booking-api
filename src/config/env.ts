@@ -1,6 +1,8 @@
 import { config } from "dotenv";
 import { z } from "zod";
 
+import { getZodFieldErrors } from "../common/utils/zod-error.js";
+
 config();
 
 const envSchema = z.object({
@@ -14,9 +16,8 @@ const envSchema = z.object({
 const parsedEnv = envSchema.safeParse(process.env);
 
 if (!parsedEnv.success) {
-  console.error("Invalid environment configuration", parsedEnv.error.flatten().fieldErrors);
+  console.error("Invalid environment configuration", getZodFieldErrors(parsedEnv.error));
   process.exit(1);
 }
 
 export const env = parsedEnv.data;
-

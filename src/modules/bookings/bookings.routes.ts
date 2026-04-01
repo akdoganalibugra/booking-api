@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import { getZodFieldErrors } from "../../common/utils/zod-error.js";
 import { cancelBookingSchema, createBookingSchema } from "./bookings.schemas.js";
 
 const bookingsRouter = Router();
@@ -12,7 +13,7 @@ bookingsRouter.post("/events/:id/bookings", (request, response) => {
       error: {
         code: "VALIDATION_ERROR",
         message: "Create booking payload doğrulanamadı.",
-        details: result.error.flatten().fieldErrors,
+        details: getZodFieldErrors(result.error),
       },
     });
     return;
@@ -37,7 +38,7 @@ bookingsRouter.patch("/bookings/:id/cancel", (request, response) => {
       error: {
         code: "VALIDATION_ERROR",
         message: "Cancel booking payload doğrulanamadı.",
-        details: result.error.flatten().fieldErrors,
+        details: getZodFieldErrors(result.error),
       },
     });
     return;

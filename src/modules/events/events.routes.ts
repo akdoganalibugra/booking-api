@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserRole } from "@prisma/client";
 
 import { AppError } from "../../common/errors/app-error.js";
+import { getZodFieldErrors } from "../../common/utils/zod-error.js";
 import { requireAuth, requireRole } from "../auth/auth.middleware.js";
 import { createEventSchema, updateEventSchema } from "./events.schemas.js";
 import {
@@ -54,7 +55,7 @@ eventsRouter.post("/", requireAuth, requireRole(UserRole.ADMIN), async (request,
       error: {
         code: "VALIDATION_ERROR",
         message: "Create event payload doğrulanamadı.",
-        details: result.error.flatten().fieldErrors,
+        details: getZodFieldErrors(result.error),
       },
     });
     return;
@@ -79,7 +80,7 @@ eventsRouter.patch("/:id", requireAuth, requireRole(UserRole.ADMIN), async (requ
       error: {
         code: "VALIDATION_ERROR",
         message: "Update event payload doğrulanamadı.",
-        details: result.error.flatten().fieldErrors,
+        details: getZodFieldErrors(result.error),
       },
     });
     return;

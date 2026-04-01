@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import { getZodFieldErrors } from "../../common/utils/zod-error.js";
 import { loginSchema, registerSchema } from "./auth.schemas.js";
 import { loginUser, registerUser } from "./auth.service.js";
 
@@ -13,7 +14,7 @@ authRouter.post("/register", async (request, response, next) => {
       error: {
         code: "VALIDATION_ERROR",
         message: "Register payload doğrulanamadı.",
-        details: result.error.flatten().fieldErrors,
+        details: getZodFieldErrors(result.error),
       },
     });
     return;
@@ -38,7 +39,7 @@ authRouter.post("/login", async (request, response, next) => {
       error: {
         code: "VALIDATION_ERROR",
         message: "Login payload doğrulanamadı.",
-        details: result.error.flatten().fieldErrors,
+        details: getZodFieldErrors(result.error),
       },
     });
     return;
