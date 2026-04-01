@@ -58,6 +58,18 @@ export async function listBookingsByUserId(userId: string): Promise<Booking[]> {
   });
 }
 
+export async function listPendingBookingsForProcessing(limit = 100): Promise<Booking[]> {
+  return prisma.booking.findMany({
+    where: {
+      status: BookingStatus.PENDING,
+    },
+    orderBy: {
+      reservedAt: "asc",
+    },
+    take: limit,
+  });
+}
+
 export async function cancelBookingById(input: {
   bookingId: string;
   userId: string;
@@ -104,6 +116,87 @@ export async function cancelBookingById(input: {
         id: booking.id,
       },
     });
+  });
+}
+
+export async function confirmBookingById(bookingId: string): Promise<Booking | null> {
+  return prisma.$transaction(async (tx) => {
+    const booking = await tx.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+    });
+
+    if (!booking || booking.status !== BookingStatus.PENDING) {
+      return booking;
+    }
+
+    return tx.booking.update({
+      where: {
+        id: booking.id,
+      },
+      data: {
+        status: BookingStatus.CONFIRMED,
+        confirmedAt: new Date(),
+      },
+    });
+  });
+}
+
+export async function expireBookingById(bookingId: string): Promise<Booking | null> {
+  return prisma.$transaction(async (tx) => {
+    const booking = await tx.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+    });
+
+    if (!booking || booking.status !== BookingStatus.PENDING) {
+      return booking;
+    }
+
+    await tx.booking.update({
+      where: {
+        id: booking.id,
+      },
+      data: {
+        status: BookingStatus.EXPIRED,
+      },
+    });
+
+    await tx.event.update({
+      where: {
+        id: booking.eventId,
+      },
+      data: {
+        availableCapacity: {
+          increment: 1,
+        },
+      },
+    });
+
+    return tx.booking.findUnique({
+      where: {
+        id: booking.id,
+      },
+    });
+  });
+}
+
+export async function createPaymentAttempt(input: {
+  bookingId: string;
+  providerReference: string;
+  status: "PENDING" | "SUCCESS" | "FAILED";
+  payload: Prisma.InputJsonValue;
+}): Promise<void> {
+  await prisma.paymentAttempt.create({
+    data: {
+      bookingId: input.bookingId,
+      providerReference: input.providerReference,
+      status: input.status,
+      payload: input.payload,
+      checkedAt: new Date(),
+    },
   });
 }
 
