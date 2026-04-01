@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum EventStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentProvider {
+  MOCK
+}
+
+enum PaymentAttemptStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@map("users")
+}
+
+model Event {
+  id                String      @id @default(cuid())
+  title             String
+  description       String?     @db.Text
+  location          String
+  startsAt          DateTime
+  endsAt            DateTime
+  totalCapacity     Int
+  availableCapacity Int
+  status            EventStatus @default(ACTIVE)
+  deletedAt         DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  bookings Booking[]
+
+  @@index([status, deletedAt])
+  @@map("events")
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  userId      String
+  eventId     String
+  status      BookingStatus @default(PENDING)
+  reservedAt  DateTime      @default(now())
+  expiresAt   DateTime
+  confirmedAt DateTime?
+  cancelledAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id])
+  event           Event            @relation(fields: [eventId], references: [id])
+  paymentAttempts PaymentAttempt[]
+
+  @@index([status, expiresAt])
+  @@index([eventId])
+  @@index([userId])
+  @@map("bookings")
+}
+
+model PaymentAttempt {
+  id                String               @id @default(cuid())
+  bookingId         String
+  provider          PaymentProvider      @default(MOCK)
+  providerReference String?
+  status            PaymentAttemptStatus @default(PENDING)
+  payload           Json?
+  checkedAt         DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+  @@map("payment_attempts")
+}
+
