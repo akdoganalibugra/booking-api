@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { loginSchema, registerSchema } from "./auth.schemas.js";
-import { registerUser } from "./auth.service.js";
+import { loginUser, registerUser } from "./auth.service.js";
 
 const authRouter = Router();
 
@@ -30,7 +30,7 @@ authRouter.post("/register", async (request, response, next) => {
   }
 });
 
-authRouter.post("/login", (request, response) => {
+authRouter.post("/login", async (request, response, next) => {
   const result = loginSchema.safeParse(request.body);
 
   if (!result.success) {
@@ -44,9 +44,13 @@ authRouter.post("/login", (request, response) => {
     return;
   }
 
-  response.status(501).json({
-    message: "Login endpoint sonraki fazda uygulanacak.",
-  });
+  try {
+    const auth = await loginUser(result.data);
+
+    response.status(200).json(auth);
+  } catch (error) {
+    next(error);
+  }
 });
 
 export { authRouter };
