@@ -3,22 +3,35 @@ import { UserRole } from "@prisma/client";
 
 import { requireAuth, requireRole } from "../auth/auth.middleware.js";
 import { createEventSchema, updateEventSchema } from "./events.schemas.js";
+import { createEventRecord, getActiveEventDetail, getActiveEvents } from "./events.service.js";
 
 const eventsRouter = Router();
 
-eventsRouter.get("/", (_request, response) => {
-  response.status(501).json({
-    message: "Events listing endpoint sonraki fazda uygulanacak.",
-  });
+eventsRouter.get("/", async (_request, response, next) => {
+  try {
+    const events = await getActiveEvents();
+
+    response.status(200).json({
+      data: events,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-eventsRouter.get("/:id", (_request, response) => {
-  response.status(501).json({
-    message: "Event detail endpoint sonraki fazda uygulanacak.",
-  });
+eventsRouter.get("/:id", async (request, response, next) => {
+  try {
+    const event = await getActiveEventDetail(request.params.id);
+
+    response.status(200).json({
+      data: event,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-eventsRouter.post("/", requireAuth, requireRole(UserRole.ADMIN), (request, response) => {
+eventsRouter.post("/", requireAuth, requireRole(UserRole.ADMIN), async (request, response, next) => {
   const result = createEventSchema.safeParse(request.body);
 
   if (!result.success) {
@@ -32,9 +45,15 @@ eventsRouter.post("/", requireAuth, requireRole(UserRole.ADMIN), (request, respo
     return;
   }
 
-  response.status(501).json({
-    message: "Event create endpoint sonraki fazda uygulanacak.",
-  });
+  try {
+    const event = await createEventRecord(result.data);
+
+    response.status(201).json({
+      data: event,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 eventsRouter.patch("/:id", requireAuth, requireRole(UserRole.ADMIN), (request, response) => {
