@@ -93,6 +93,20 @@ npm test
 npm run build
 ```
 
+## Swagger
+
+Uygulama çalışırken Swagger arayüzü:
+
+```text
+http://localhost:3000/docs
+```
+
+Ham OpenAPI JSON çıktısı:
+
+```text
+http://localhost:3000/docs.json
+```
+
 ## Temel Akış
 
 1. Customer giriş yapar ve etkinlikleri listeler.

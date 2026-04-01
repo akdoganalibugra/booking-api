@@ -4,6 +4,18 @@ Bu doküman, API sözleşmesinin tam dökümü değil; uygulamayı hızlı denem
 
 Tam endpoint sözleşmesi ileride Swagger / OpenAPI üzerinden yayınlanacaktır.
 
+Mevcut Swagger arayüzü:
+
+```text
+http://localhost:3000/docs
+```
+
+OpenAPI JSON çıktısı:
+
+```text
+http://localhost:3000/docs.json
+```
+
 ## Base URL
 
 ```text
