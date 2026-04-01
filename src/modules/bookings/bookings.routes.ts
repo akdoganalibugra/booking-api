@@ -5,7 +5,7 @@ import type { AuthenticatedRequest } from "../../common/types/authenticated-requ
 import { getZodFieldErrors } from "../../common/utils/zod-error.js";
 import { requireAuth } from "../auth/auth.middleware.js";
 import { cancelBookingSchema, createBookingSchema } from "./bookings.schemas.js";
-import { createBookingForUser } from "./bookings.service.js";
+import { cancelBookingForUser, createBookingForUser, listBookingsForUser } from "./bookings.service.js";
 
 const bookingsRouter = Router();
 
@@ -47,13 +47,24 @@ bookingsRouter.post("/events/:id/bookings", requireAuth, async (request: Authent
   }
 });
 
-bookingsRouter.get("/me/bookings", (_request, response) => {
-  response.status(501).json({
-    message: "List my bookings endpoint sonraki fazda uygulanacak.",
-  });
+bookingsRouter.get("/me/bookings", requireAuth, async (request: AuthenticatedRequest, response, next) => {
+  if (!request.user) {
+    next(new AppError("Kimlik doğrulama gereklidir.", 401, "UNAUTHORIZED"));
+    return;
+  }
+
+  try {
+    const bookings = await listBookingsForUser(request.user);
+
+    response.status(200).json({
+      data: bookings,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-bookingsRouter.patch("/bookings/:id/cancel", (request, response) => {
+bookingsRouter.patch("/bookings/:id/cancel", requireAuth, async (request: AuthenticatedRequest, response, next) => {
   const result = cancelBookingSchema.safeParse(request.body);
 
   if (!result.success) {
@@ -67,9 +78,20 @@ bookingsRouter.patch("/bookings/:id/cancel", (request, response) => {
     return;
   }
 
-  response.status(501).json({
-    message: "Cancel booking endpoint sonraki fazda uygulanacak.",
-  });
+  if (!request.user) {
+    next(new AppError("Kimlik doğrulama gereklidir.", 401, "UNAUTHORIZED"));
+    return;
+  }
+
+  try {
+    const booking = await cancelBookingForUser(request.user, getRouteId(request.params.id));
+
+    response.status(200).json({
+      data: booking,
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export { bookingsRouter };

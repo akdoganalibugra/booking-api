@@ -47,6 +47,66 @@ export async function createPendingBooking(input: {
   });
 }
 
+export async function listBookingsByUserId(userId: string): Promise<Booking[]> {
+  return prisma.booking.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export async function cancelBookingById(input: {
+  bookingId: string;
+  userId: string;
+}): Promise<Booking | null> {
+  return prisma.$transaction(async (tx) => {
+    const booking = await tx.booking.findFirst({
+      where: {
+        id: input.bookingId,
+        userId: input.userId,
+      },
+    });
+
+    if (!booking) {
+      return null;
+    }
+
+    if (booking.status !== BookingStatus.PENDING) {
+      return booking;
+    }
+
+    await tx.booking.update({
+      where: {
+        id: booking.id,
+      },
+      data: {
+        status: BookingStatus.CANCELLED,
+        cancelledAt: new Date(),
+      },
+    });
+
+    await tx.event.update({
+      where: {
+        id: booking.eventId,
+      },
+      data: {
+        availableCapacity: {
+          increment: 1,
+        },
+      },
+    });
+
+    return tx.booking.findUnique({
+      where: {
+        id: booking.id,
+      },
+    });
+  });
+}
+
 async function lockReservableEvent(
   tx: TransactionClient,
   eventId: string,
@@ -62,4 +122,3 @@ async function lockReservableEvent(
 
   return rows[0] ?? null;
 }
-
