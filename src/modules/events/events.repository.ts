@@ -30,3 +30,19 @@ export async function findActiveEventById(id: string): Promise<Event | null> {
   });
 }
 
+export async function findEventById(id: string): Promise<Event | null> {
+  return prisma.event.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+export async function updateEvent(id: string, data: Prisma.EventUpdateInput): Promise<Event> {
+  return prisma.event.update({
+    where: {
+      id,
+    },
+    data,
+  });
+}
