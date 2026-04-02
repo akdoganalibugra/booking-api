@@ -83,6 +83,32 @@ Worker build:
 npm run start:worker
 ```
 
+## Docker ile Çalıştırma
+
+Tüm servisleri birlikte ayağa kaldırmak için:
+
+```bash
+docker compose up --build
+```
+
+Arka planda çalıştırmak için:
+
+```bash
+docker compose up --build -d
+```
+
+Servisleri durdurmak için:
+
+```bash
+docker compose down
+```
+
+Veritabanı volume'unu da silmek için:
+
+```bash
+docker compose down -v
+```
+
 ## Testler
 
 ```bash
@@ -105,6 +131,12 @@ Ham OpenAPI JSON çıktısı:
 
 ```text
 http://localhost:3000/docs.json
+```
+
+Docker ile ayağa kaldırdıktan sonra Swagger üstünden tüm akışları buradan test edebilirsin:
+
+```text
+http://localhost:3000/docs
 ```
 
 ## Temel Akış
