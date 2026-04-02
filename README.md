@@ -85,13 +85,13 @@ npm run start:worker
 
 ## Docker ile Çalıştırma
 
-Önce Docker ortam dosyasını oluştur:
+Önce ortam dosyasını oluştur:
 
 ```bash
-cp .env.docker.example .env.docker
+cp .env.example .env
 ```
 
-Ardından `JWT_SECRET` değerini kendi ortamın için güncelle.
+Ardından `.env` içindeki `JWT_SECRET` değerini kendi ortamın için güncelle.
 
 Tüm servisleri birlikte ayağa kaldırmak için:
 

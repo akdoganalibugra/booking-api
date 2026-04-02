@@ -4,7 +4,7 @@ services:
     container_name: booking-api-mysql
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -24,7 +24,7 @@ services:
     container_name: booking-api-app
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - .env
     depends_on:
       mysql:
         condition: service_healthy
@@ -40,7 +40,7 @@ services:
     container_name: booking-api-worker
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - .env
     depends_on:
       mysql:
         condition: service_healthy
