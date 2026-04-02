@@ -33,7 +33,7 @@ services:
     ports:
       - "${PORT:-3000}:3000"
     command: >
-      sh -c "npx prisma migrate deploy &&
+      sh -c "./node_modules/.bin/prisma migrate deploy &&
              node dist/server.js"
 
   worker:
@@ -49,7 +49,7 @@ services:
     environment:
       DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
     command: >
-      sh -c "npx prisma migrate deploy &&
+      sh -c "./node_modules/.bin/prisma migrate deploy &&
              node dist/jobs/expiry-worker.js"
 
 volumes:
