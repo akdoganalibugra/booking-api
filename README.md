@@ -192,8 +192,7 @@ Tamamlanan çekirdek kapsam:
 - Expiry worker
 - Temel test kapsamı
 
-Planlanan sonraki adımlar:
+Opsiyonel sonraki adımlar:
 
-- Swagger / OpenAPI
-- Docker ve tek sunuculu dağıtım dosyaları
+- EC2 üzerinde tek sunuculu dağıtım
 - Gerekirse refresh token bonus fazı
