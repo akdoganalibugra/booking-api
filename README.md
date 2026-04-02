@@ -180,6 +180,7 @@ http://localhost:3000/docs
 - [IMPLEMENTATION_PLAN.md](/Users/akdoganalibugra/Depo/booking-api/IMPLEMENTATION_PLAN.md)
 - [ARCHITECTURE.md](/Users/akdoganalibugra/Depo/booking-api/ARCHITECTURE.md)
 - [API.md](/Users/akdoganalibugra/Depo/booking-api/API.md)
+- [LIVE_TESTS.md](/Users/akdoganalibugra/Depo/booking-api/LIVE_TESTS.md)
 - [booking_api.sql](/Users/akdoganalibugra/Depo/booking-api/booking_api.sql)
 
 ## SQL Dump
