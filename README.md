@@ -56,6 +56,25 @@ npm run prisma:generate
 npm run prisma:migrate:dev
 ```
 
+### Admin Bootstrap
+
+Reviewer veya lokal test için admin kullanıcıyı tek komutla hazırlayabilirsin:
+
+```bash
+npm run seed:admin
+```
+
+Varsayılan kullanıcı:
+
+- email: `admin@example.com`
+- password: `password123`
+
+İstersen özel değerlerle de çalıştırabilirsin:
+
+```bash
+npm run seed:admin -- --email=reviewer@example.com --password=strongPassword123
+```
+
 ## Uygulamayı Çalıştırma
 
 API:
