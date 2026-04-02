@@ -45,7 +45,7 @@ cp .env.example .env
 NODE_ENV=development
 PORT=3000
 DATABASE_URL="mysql://root:root@localhost:3306/booking_api"
-JWT_SECRET="change-me"
+JWT_SECRET="replace-with-a-long-random-secret"
 JWT_EXPIRES_IN="1h"
 ```
 
@@ -201,8 +201,10 @@ Tamamlanan çekirdek kapsam:
 - Mock payment adapter
 - Expiry worker
 - Temel test kapsamı
+- SQL dump dosyası
+- Canlı EC2 doğrulaması
+- Canlı test özeti
 
 Opsiyonel sonraki adımlar:
 
-- EC2 üzerinde tek sunuculu dağıtım
 - Gerekirse refresh token bonus fazı

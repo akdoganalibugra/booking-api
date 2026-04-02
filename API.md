@@ -2,7 +2,7 @@
 
 Bu doküman, API sözleşmesinin tam dökümü değil; uygulamayı hızlı denemek için pratik örnek akışlar içerir.
 
-Tam endpoint sözleşmesi ileride Swagger / OpenAPI üzerinden yayınlanacaktır.
+Tam endpoint sözleşmesi Swagger / OpenAPI üzerinden yayınlanmaktadır.
 
 Mevcut Swagger arayüzü:
 
@@ -134,7 +134,9 @@ Bu istek fiziksel silme yapmaz; içeride soft delete çalışır.
 
 ```bash
 curl -X POST http://localhost:3000/events/<eventId>/bookings \
-  -H "Authorization: Bearer <customerToken>"
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <customerToken>" \
+  -d '{}'
 ```
 
 Örnek cevap:
@@ -167,7 +169,9 @@ curl http://localhost:3000/me/bookings \
 
 ```bash
 curl -X PATCH http://localhost:3000/bookings/<bookingId>/cancel \
-  -H "Authorization: Bearer <customerToken>"
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <customerToken>" \
+  -d '{}'
 ```
 
 ## Mock Payment Akışı

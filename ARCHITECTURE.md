@@ -210,7 +210,4 @@ Uygulamada üç test seviyesi hedeflenmiştir:
 
 ## Açık Sonraki Adımlar
 
-- Swagger / OpenAPI dokümantasyonu
-- Docker ve compose dosyaları
-- EC2 üzerinde tek sunuculu dağıtım notları
 - bonus olarak refresh token desteği
