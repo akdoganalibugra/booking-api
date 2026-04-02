@@ -3,9 +3,11 @@ services:
     image: mysql:8.4
     container_name: booking-api-mysql
     restart: unless-stopped
+    env_file:
+      - .env.docker
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: booking_api
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     volumes:
@@ -21,17 +23,13 @@ services:
       context: .
     container_name: booking-api-app
     restart: unless-stopped
+    env_file:
+      - .env.docker
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: mysql://root:root@mysql:3306/booking_api
-      JWT_SECRET: change-me
-      JWT_EXPIRES_IN: 1h
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:3000"
     command: >
       sh -c "npx prisma migrate deploy &&
              node dist/server.js"
@@ -41,15 +39,11 @@ services:
       context: .
     container_name: booking-api-worker
     restart: unless-stopped
+    env_file:
+      - .env.docker
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: mysql://root:root@mysql:3306/booking_api
-      JWT_SECRET: change-me
-      JWT_EXPIRES_IN: 1h
     command: >
       sh -c "npx prisma migrate deploy &&
              node dist/jobs/expiry-worker.js"
